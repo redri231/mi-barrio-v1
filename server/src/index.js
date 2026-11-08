@@ -58,11 +58,32 @@ app.get('/api/v1/neighborhoods', async (_request, response) => {
   }
 });
 
+app.post('/auth/otp/request', (_request, response) => {
+  response.status(501).json({
+    error: 'OTP_PROVIDER_NOT_CONFIGURED',
+    message: 'El envío de códigos SMS aún no está configurado en este servidor.',
+  });
+});
+
+app.post('/auth/otp/verify', (_request, response) => {
+  response.status(501).json({
+    error: 'OTP_PROVIDER_NOT_CONFIGURED',
+    message: 'La verificación OTP aún no está configurada en este servidor.',
+  });
+});
+
+app.use((_request, response) => {
+  response.status(404).json({ error: 'Route not found.' });
+});
+
 app.use((error, _request, response, _next) => {
   if (error?.message === 'Origin is not allowed by CORS.') {
     return response.status(403).json({ error: 'Origin is not allowed.' });
   }
-  if (error instanceof SyntaxError && 'body' in error) {
+  if (error?.type === 'entity.too.large') {
+    return response.status(413).json({ error: 'Request body is too large.' });
+  }
+  if (error?.type === 'entity.parse.failed' || (error instanceof SyntaxError && 'body' in error)) {
     return response.status(400).json({ error: 'Invalid JSON body.' });
   }
   console.error('Unhandled API request error.');

@@ -59,7 +59,7 @@ Join our community of developers creating universal apps.
 
 The mobile app connects to the Node API in `server/`. The API connects to Render Postgres using the private `DATABASE_URL`; never put a PostgreSQL connection string in an `EXPO_PUBLIC_*` variable.
 
-For local API development, copy `server/.env.example` to `server/.env`, add the Render **External Database URL** with `sslmode=require`, then run:
+For local API development, copy `server/.env.example` to `server/.env`, add the Render **External Database URL** with `sslmode=verify-full`, then run:
 
 ```bash
 npm --prefix server install

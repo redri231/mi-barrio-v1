@@ -2,6 +2,8 @@
 
 La app móvil de Mi Barrio ya contiene las pantallas de registro e inicio de sesión. Ambas usan OTP por SMS y requieren un backend configurado mediante `EXPO_PUBLIC_API_URL`. El cliente no genera ni acepta códigos locales de prueba.
 
+**Estado actual:** el backend define las dos rutas, pero responden `501` hasta seleccionar y configurar un proveedor SMS y completar el flujo de desafíos/sesión. No enviar a producción como autenticación disponible mientras sigan en ese estado.
+
 ## Solicitar código
 
 `POST /auth/otp/request`
