@@ -54,3 +54,16 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Mi Barrio API and Render Postgres
+
+The mobile app connects to the Node API in `server/`. The API connects to Render Postgres using the private `DATABASE_URL`; never put a PostgreSQL connection string in an `EXPO_PUBLIC_*` variable.
+
+For local API development, copy `server/.env.example` to `server/.env`, add the Render **External Database URL** with `sslmode=require`, then run:
+
+```bash
+npm --prefix server install
+npm --prefix server run dev
+```
+
+For Render deployment steps and health endpoints, see [`server/README.md`](./server/README.md). Set `EXPO_PUBLIC_API_URL` in the Expo environment to the deployed API's HTTPS URL; `.env.example` shows the expected format. The API must expose the OTP endpoints documented in [`docs/auth-api-contract.md`](./docs/auth-api-contract.md) before registration and login can send real SMS codes.
