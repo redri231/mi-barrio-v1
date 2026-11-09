@@ -6,7 +6,7 @@ const PENDING_KEY = 'mibarrio.auth.pending';
 const SESSION_KEY = 'mibarrio.auth.session';
 const INSTALLATION_KEY = 'mibarrio.installation.id';
 
-export type PendingRegistration = { fullName?: string; phoneNumber: string };
+export type PendingRegistration = { fullName?: string; phoneNumber: string; demoCode?: string };
 export type StoredSession = {
   accessToken: string;
   refreshToken?: string;

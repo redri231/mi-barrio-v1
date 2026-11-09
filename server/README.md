@@ -6,7 +6,7 @@ Small Node API that gives the Expo app a safe path to Render Postgres. PostgreSQ
 
 1. From `server/`, install dependencies with `npm install`.
 2. Copy `.env.example` to `.env` and set `DATABASE_URL` to the database's **External Database URL** from Render. Use `?sslmode=verify-full` for TLS with certificate and hostname validation. The deployed Render service should use the internal URL without this query option.
-3. Set `AUTH_TOKEN_SECRET` to a random value of at least 32 characters. For real SMS, set `OTP_PROVIDER=twilio` and the three `TWILIO_*` credentials in `server/.env`. Without provider credentials, leave `OTP_PROVIDER=disabled`; OTP requests return `503` instead of showing a simulated code. Configure `EXPO_PUBLIC_API_URL=http://localhost:10000` in the ignored root `.env.development.local`.
+3. Set `AUTH_TOKEN_SECRET` to a random value of at least 32 characters. For local development without SMS, use `NODE_ENV=development`, `OTP_PROVIDER=simulated` and `OTP_DEMO_MODE=true` in `server/.env`. The development app displays the generated code. For real SMS use Twilio; never enable simulated OTP in production. Configure `EXPO_PUBLIC_API_URL=http://localhost:10000` in the ignored root `.env.development.local`.
 4. Run `npm run dev` from `server/` and `npx expo start` from the project root. Check `http://localhost:10000/health/ready` for PostgreSQL and PostGIS readiness.
 
 The app uses `10.0.2.2` for Android Emulator and the Expo development server's host address for a physical device when the configured API URL is `localhost`. For a physical device, run Expo in LAN mode and allow port 10000 through the computer's firewall; the phone and computer must be on the same network.
@@ -52,10 +52,10 @@ Place the API and database in the same Render region/account, then use the inter
 - `POST /api/v1/services/:serviceId/vouches`: stores one Visto Bueno per verified neighbor through `vistos_buenos`; the existing database trigger maintains the counter.
 - `POST /api/v1/services/:serviceId/reports`: records a community report in `community_reports`; existing uniqueness and moderation triggers govern duplicates and hide thresholds.
 - `GET /api/v1/community/my-tool-requests`, `GET /api/v1/community/tools/:toolId/requests`, `PATCH /api/v1/community/tool-requests/:requestId`: check personal requests and let a tool owner accept a loan or mark a return.
-- `POST /auth/otp/request`: generates an in-memory, six-digit challenge with a five-minute expiry and sends it through Twilio. It never returns the code.
+- `POST /auth/otp/request`: generates an in-memory, six-digit challenge with a five-minute expiry. The simulated development provider returns the code only with explicit development settings; Twilio sends it by SMS and never returns it.
 - `POST /auth/otp/verify`: validates the code on the server, allows at most five wrong attempts per challenge, creates a level-1 user after successful registration verification, or logs in an existing user. It returns a signed access token valid for one hour.
 
-There is no simulated OTP provider. The app does not display demo codes. Challenges, rate limits and verification states stay in process memory; restarting the server clears them, so use a shared store before deploying multiple instances. With `OTP_PROVIDER=disabled`, OTP endpoints return `503` until Twilio credentials are configured.
+The simulated OTP provider requires `OTP_PROVIDER=simulated`, `OTP_DEMO_MODE=true`, and `NODE_ENV=development`. Startup fails if simulated mode is enabled in production. Challenges, rate limits and verification states stay in process memory; restarting the server clears them, so use a shared store before deploying multiple instances. With `OTP_PROVIDER=disabled`, OTP endpoints return `503` until a provider is configured.
 
 The current PostgreSQL schema has no OTP challenge table. OTP lifecycle states (`pending`, `verified`, `expired`, `locked`, `consumed`) therefore remain transient in memory; `residency_verifications.status` belongs to residency review and is not used for authentication. No tables or migrations were changed. The `users` insert uses existing fields and hashes the app's persistent installation UUID into `hardware_device_hash`.
 

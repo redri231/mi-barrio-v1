@@ -55,7 +55,32 @@ export class DisabledOtpProvider {
   }
 }
 
+export class SimulatedSmsProvider {
+  async sendOtp({ code }) {
+    return { accepted: true, demoCode: code };
+  }
+}
+
 export function createOtpProvider() {
+  const provider = process.env.OTP_PROVIDER ?? 'disabled';
+  const demoMode = process.env.OTP_DEMO_MODE === 'true';
+  const development = process.env.NODE_ENV === 'development';
+
+  if (process.env.NODE_ENV === 'production' && (demoMode || provider === 'simulated' || provider === 'mock')) {
+    throw new Error('Simulated OTP is forbidden in production. Set OTP_PROVIDER=twilio or disabled.');
+  }
+
+  if (provider === 'simulated' || provider === 'mock') {
+    if (!development || !demoMode) {
+      throw new Error('Simulated OTP requires NODE_ENV=development and OTP_DEMO_MODE=true.');
+    }
+    return new SimulatedSmsProvider();
+  }
+
+  if (demoMode) {
+    throw new Error('OTP_DEMO_MODE=true requires OTP_PROVIDER=simulated and NODE_ENV=development.');
+  }
+
   switch (process.env.OTP_PROVIDER ?? 'disabled') {
     case 'disabled': return new DisabledOtpProvider();
     case 'twilio': {
@@ -65,7 +90,6 @@ export function createOtpProvider() {
       }
       return new TwilioSmsProvider({ accountSid, authToken, fromNumber });
     }
-    case 'mock': throw new Error('OTP_PROVIDER=mock is not supported. Configure Twilio or keep OTP_PROVIDER=disabled.');
-    default: throw new Error('OTP_PROVIDER must be "disabled" or "twilio".');
+    default: throw new Error('OTP_PROVIDER must be "disabled", "twilio" or "simulated".');
   }
 }

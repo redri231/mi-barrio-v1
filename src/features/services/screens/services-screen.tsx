@@ -170,7 +170,7 @@ export function ServicesScreen() {
   return (
     <AppShell activeTab="services">
       <View className="flex-1">
-        <ScrollView contentContainerClassName="gap-3 px-3 py-4 pb-8" keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerClassName="gap-3 px-4 py-4 pb-8" keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <View><Text className="text-2xl font-extrabold text-barrio-ink">Oficios cerca de ti</Text><Text className="mt-1 text-sm leading-5 text-barrio-muted">Servicios recomendados por personas del barrio.</Text></View>
           <View className="flex-row items-center gap-2 rounded-2xl border border-barrio-border bg-white px-3"><SymbolView name={{ ios: 'magnifyingglass', android: 'search', web: 'search' }} tintColor="#4F5F58" size={21} /><TextInput accessibilityLabel="Buscar oficio o tienda" className="min-h-12 flex-1 text-base text-barrio-ink" onChangeText={setQuery} onSubmitEditing={() => void searchNearby()} placeholder="Buscar: gasfitero, clases…" returnKeyType="search" value={query} /></View>
           <ScrollView horizontal contentContainerClassName="gap-2" showsHorizontalScrollIndicator={false}>

@@ -112,7 +112,7 @@ export default function LearnScreen() {
   return (
     <AppShell activeTab="learn">
       <View className="mx-auto w-full max-w-2xl flex-1">
-        <ScrollView contentContainerClassName="gap-5 px-5 pb-8" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerClassName="gap-3 px-4 py-4 pb-8" showsVerticalScrollIndicator={false}>
           <View>
             <Text className="text-2xl font-bold text-barrio-ink">Aprendamos entre vecinos</Text>
             <Text className="mt-1 text-base leading-6 text-barrio-muted">

@@ -138,7 +138,7 @@ export default function ProfileScreen() {
   return (
     <AppShell activeTab="profile">
       <View className="mx-auto w-full max-w-2xl flex-1">
-        <ScrollView contentContainerClassName="gap-4 px-4 py-4 pb-8" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerClassName="gap-3 px-4 py-4 pb-8" showsVerticalScrollIndicator={false}>
           <View className="items-center rounded-3xl border border-barrio-border bg-white px-5 py-6">
             <View className="h-20 w-20 items-center justify-center rounded-full bg-barrio-green">
               <Text accessibilityLabel={`Inicial de ${profile.full_name}`} className="text-3xl font-bold text-white">

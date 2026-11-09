@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText as Text } from '@/components/app-text';
 import { useAppState } from '@/components/app-state';
+import { PhoneFrame } from '@/components/phone-frame';
 import { authApi } from '@/features/auth/data/auth-api';
 import { authStorage } from '@/features/auth/data/auth-storage';
 
@@ -62,31 +63,32 @@ export function AppShell({ activeTab, children, emergencyMode = false }: { activ
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-barrio-canvas" edges={['top', 'bottom']}>
+    <PhoneFrame emergency={emergencyMode}>
+      <SafeAreaView className={`flex-1 ${emergencyMode ? 'bg-[#FFF1E6]' : 'bg-barrio-canvas'}`} edges={['top', 'bottom']}>
       <View className="mx-auto w-full max-w-[400px] flex-1">
-        <View className="flex-row items-center gap-2 bg-barrio-green px-3 py-2">
-          <SymbolView name={{ ios: 'house.fill', android: 'home', web: 'home' }} tintColor="#FFFFFF" size={25} />
-          <Text className="flex-1 text-xl font-extrabold text-white">Mi Barrio</Text>
-          <Pressable
+        <View className={`flex-row items-center gap-2 px-3 py-2 ${emergencyMode ? 'bg-[#B71C1C]' : 'bg-barrio-green'}`}>
+          <SymbolView name={{ ios: emergencyMode ? 'exclamationmark.triangle.fill' : 'house.fill', android: emergencyMode ? 'warning' : 'home', web: emergencyMode ? 'warning' : 'home' }} tintColor="#FFFFFF" size={28} />
+          <Text className="flex-1 text-[22px] font-extrabold text-white">{emergencyMode ? 'EMERGENCIA' : 'Mi Barrio'}</Text>
+          {!emergencyMode ? <Pressable
             accessibilityRole="button"
             accessibilityLabel="Ver preferencias de avisos"
-            className="relative h-12 w-12 items-center justify-center rounded-full bg-white/20"
+            className="relative h-[51px] w-[51px] items-center justify-center rounded-full bg-white/20"
             onPress={() => setShowNotifications(true)}>
             <SymbolView name={{ ios: 'bell.fill', android: 'notifications', web: 'notifications' }} tintColor="#FFFFFF" size={23} />
-          </Pressable>
-          <Pressable
+          </Pressable> : null}
+          {!emergencyMode ? <Pressable
             accessibilityRole="button"
             accessibilityLabel={emergencyMode ? 'Salir del modo emergencia' : 'Abrir ayuda de emergencia'}
-            className="min-h-12 flex-row items-center gap-1 rounded-full border-2 border-white bg-red-600 px-3"
-            onPress={() => router.replace(emergencyMode ? '/home' : '/emergency')}>
+            className="min-h-[51px] flex-row items-center gap-1 rounded-full border-2 border-white bg-[#D32F2F] px-3"
+            onPress={() => router.replace('/emergency')}>
             <SymbolView name={{ ios: 'exclamationmark.triangle.fill', android: 'warning', web: 'warning' }} tintColor="#FFFFFF" size={20} />
-            <Text className="font-extrabold text-white">{emergencyMode ? 'SALIR' : 'SOS'}</Text>
-          </Pressable>
+            <Text className="font-extrabold text-white">SOS</Text>
+          </Pressable> : null}
         </View>
 
         <View className="flex-1">{children}</View>
 
-        <View className="flex-row border-t border-barrio-border bg-white px-1 pb-1 pt-1">
+        {!emergencyMode ? <View className="flex-row border-t border-barrio-border bg-white px-1 pb-1 pt-1">
           {TABS.map((tab) => {
             const selected = activeTab === tab.id;
             return (
@@ -95,7 +97,7 @@ export function AppShell({ activeTab, children, emergencyMode = false }: { activ
                 accessibilityRole="button"
                 accessibilityLabel={tab.label}
                 accessibilityState={{ selected }}
-                className={`min-h-[68px] flex-1 items-center justify-center gap-1 rounded-xl px-0.5 ${selected ? 'bg-barrio-green-soft' : ''}`}
+                className={`min-h-[68px] flex-1 items-center justify-center gap-1 px-0.5 ${selected ? 'bg-barrio-green-soft' : ''}`}
                 onPress={() => router.replace(tab.href)}>
                 <SymbolView
                   name={{ ios: tab.ios, android: tab.android, web: tab.android }}
@@ -108,7 +110,7 @@ export function AppShell({ activeTab, children, emergencyMode = false }: { activ
               </Pressable>
             );
           })}
-        </View>
+        </View> : null}
       </View>
 
       {showNotifications ? (
@@ -163,5 +165,6 @@ export function AppShell({ activeTab, children, emergencyMode = false }: { activ
         </View>
       ) : null}
     </SafeAreaView>
+    </PhoneFrame>
   );
 }

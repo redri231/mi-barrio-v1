@@ -1293,8 +1293,12 @@ app.post('/auth/otp/request', async (request, response, next) => {
     validateOtpRequest({ phone, fullName, installationId, ip: request.ip });
     requestedPhone = phone;
     const challenge = issueChallenge({ phone, fullName, installationId });
-    await otpProvider.sendOtp({ phoneNumber: phone, code: challenge.code });
-    return response.status(200).json({ message: 'Si el número puede registrarse, enviaremos un código.' });
+    const delivery = await otpProvider.sendOtp({ phoneNumber: phone, code: challenge.code });
+    return response.status(200).json({
+      message: delivery.demoCode ? 'Código generado para desarrollo. No se envió ningún SMS.' : 'Si el número puede registrarse, enviaremos un código.',
+      ...(process.env.NODE_ENV === 'development' && delivery.demoCode ? { demo_code: delivery.demoCode } : {}),
+      ...(delivery.demoCode ? { demo_only: true } : {}),
+    });
   } catch (error) {
     if (requestedPhone) consumeChallenge(requestedPhone);
     if (error instanceof OtpError || error.status) {

@@ -4,7 +4,7 @@ import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 
 type ApiErrorBody = { message?: string; error?: string };
-type OtpResponse = { message?: string };
+type OtpResponse = { message?: string; demo_code?: string; demo_only?: boolean };
 type VerifyResponse = {
   access_token: string;
   refresh_token?: string;
@@ -32,7 +32,7 @@ class RequestTimeoutError extends Error {}
 const REQUEST_TIMEOUT_MS = 12_000;
 
 export function getApiUrl() {
-  let apiUrl = process.env.EXPO_PUBLIC_API_URL?.trim().replace(/\/$/, '');
+  let apiUrl = (process.env.EXPO_PUBLIC_API_URL?.trim() || 'https://mi-barrio-v1.onrender.com').replace(/\/$/, '');
   if (!apiUrl) {
     throw new AuthApiError('La conexión de Mi Barrio aún no está configurada. Inténtalo más tarde.');
   }

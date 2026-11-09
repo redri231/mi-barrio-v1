@@ -54,10 +54,11 @@ export default function AuthScreen() {
     const phoneNumber = `+51${digits}`;
     setLoading(true);
     try {
-      await authApi.requestOtp(phoneNumber, mode === 'register' ? cleanName : undefined);
+      const otpResponse = await authApi.requestOtp(phoneNumber, mode === 'register' ? cleanName : undefined);
       await authStorage.savePendingRegistration({
         phoneNumber,
         ...(mode === 'register' ? { fullName: cleanName } : {}),
+        ...(__DEV__ && otpResponse.demo_code ? { demoCode: otpResponse.demo_code } : {}),
       });
       router.push('/verify');
     } catch (error) {
@@ -84,9 +85,7 @@ export default function AuthScreen() {
 
   return (
     <AuthShell>
-      <Text className="text-2xl font-bold text-barrio-ink">
-        {mode === 'register' ? 'Únete a tu barrio' : 'Qué bueno verte'}
-      </Text>
+      <Text className="text-[21px] font-bold text-barrio-ink">Entrar es fácil</Text>
       <Text className="mb-6 mt-2 text-base leading-6 text-barrio-muted">
         {mode === 'register'
           ? 'Confirma tu celular para empezar a conectar con tus vecinos.'

@@ -58,7 +58,7 @@ export default function HomeScreen() {
 
   return (
     <AppShell activeTab="home">
-      <ScrollView contentContainerClassName="gap-4 px-4 py-4 pb-8" showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerClassName="gap-3 px-4 py-4 pb-8" showsVerticalScrollIndicator={false}>
         {loading ? (
           <View className="items-center py-10"><ActivityIndicator accessibilityLabel="Cargando inicio" color="#1F7A5C" /></View>
         ) : (

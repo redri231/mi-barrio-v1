@@ -11,7 +11,7 @@ export function AuthInput({ label, error, leading, className, ...props }: AuthIn
     <View className="gap-2">
       <Text className="text-base font-semibold text-barrio-ink">{label}</Text>
       <View
-        className={`min-h-14 flex-row items-center rounded-2xl border bg-white px-4 ${
+        className={`min-h-14 flex-row items-center rounded-[14px] border-2 bg-white px-4 ${
           error ? 'border-red-600' : 'border-barrio-border focus-within:border-barrio-green'
         }`}>
         {leading ? <Text className="mr-3 text-base font-semibold text-barrio-muted">{leading}</Text> : null}

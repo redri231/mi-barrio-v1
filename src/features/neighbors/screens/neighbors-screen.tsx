@@ -189,7 +189,7 @@ export function NeighborsScreen() {
   return (
     <AppShell activeTab="neighbors">
       <View className="flex-1">
-        <ScrollView contentContainerClassName="gap-3 px-3 py-4 pb-8" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerClassName="gap-3 px-4 py-4 pb-8" showsVerticalScrollIndicator={false}>
           <View accessibilityRole="tablist" className="flex-row rounded-2xl bg-barrio-green-soft p-1">{TABS.map((item) => { const selected = tab === item.id; return <Pressable key={item.id} accessibilityRole="tab" accessibilityState={{ selected }} className={`min-h-12 flex-1 items-center justify-center rounded-xl px-1 ${selected ? 'bg-barrio-green' : ''}`} onPress={() => setTab(item.id)}><Text className={`text-center text-xs font-bold ${selected ? 'text-white' : 'text-barrio-green-dark'}`}>{item.label}</Text></Pressable>; })}</View>
           {loading || busy ? <View className="items-center py-4"><ActivityIndicator accessibilityLabel="Cargando actividad vecinal" color="#1F7A5C" /></View> : null}
           {notice ? <View className="flex-row items-start gap-2 rounded-2xl bg-barrio-green-soft px-4 py-3"><Text accessibilityLiveRegion="polite" className="flex-1 text-sm leading-5 text-barrio-ink">{notice}</Text><Pressable accessibilityRole="button" accessibilityLabel="Cerrar aviso" onPress={() => setNotice('')}><Text className="font-bold text-barrio-green">×</Text></Pressable></View> : null}
