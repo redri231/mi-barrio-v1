@@ -29,7 +29,7 @@ export default function VerifyScreen() {
       .then((value) => {
         if (mounted) {
           setPending(value);
-          if (__DEV__ && value?.demoCode) setCode(value.demoCode);
+          if (value?.demoCode) setCode(value.demoCode);
         }
       })
       .catch(() => {
@@ -79,7 +79,10 @@ export default function VerifyScreen() {
     setRequestError('');
     try {
       const otpResponse = await authApi.requestOtp(pending.phoneNumber, pending.fullName);
-      const updatedPending = { ...pending, demoCode: __DEV__ ? otpResponse.demo_code : undefined };
+      const updatedPending = {
+        ...pending,
+        demoCode: otpResponse.demo_only ? otpResponse.demo_code : undefined,
+      };
       setPending(updatedPending);
       await authStorage.savePendingRegistration(updatedPending);
       setCode(updatedPending.demoCode ?? '');
@@ -119,11 +122,11 @@ export default function VerifyScreen() {
     <AuthShell>
       <Text className="text-2xl font-bold text-barrio-ink">Escribe el código</Text>
       <Text className="mb-6 mt-2 text-base leading-6 text-barrio-muted">
-        {__DEV__ && pending.demoCode ? 'Preparamos un SMS simulado para ' : 'Enviamos un mensaje de texto a '}
+        {pending.demoCode ? 'Preparamos un SMS simulado para ' : 'Enviamos un mensaje de texto a '}
         <Text className="font-bold text-barrio-ink">{formatPhone(pending.phoneNumber)}</Text>.
       </Text>
 
-      {__DEV__ && pending.demoCode ? (
+      {pending.demoCode ? (
         <View className="mb-5 gap-1 rounded-2xl border border-amber-300 bg-amber-50 p-4">
           <Text className="text-xs font-bold uppercase tracking-wide text-amber-900">SMS simulado · solo desarrollo</Text>
           <Text accessibilityLabel={`Código de desarrollo ${pending.demoCode}`} className="text-3xl font-extrabold tracking-[8px] text-amber-950">{pending.demoCode}</Text>

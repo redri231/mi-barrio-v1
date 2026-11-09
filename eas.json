@@ -1,6 +1,10 @@
 {
   "build": {
     "preview": {
+      "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://mi-barrio-v1.onrender.com"
+      },
       "android": {
         "buildType": "apk"
       }

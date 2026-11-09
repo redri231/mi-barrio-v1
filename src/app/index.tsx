@@ -58,7 +58,7 @@ export default function AuthScreen() {
       await authStorage.savePendingRegistration({
         phoneNumber,
         ...(mode === 'register' ? { fullName: cleanName } : {}),
-        ...(__DEV__ && otpResponse.demo_code ? { demoCode: otpResponse.demo_code } : {}),
+        ...(otpResponse.demo_only && otpResponse.demo_code ? { demoCode: otpResponse.demo_code } : {}),
       });
       router.push('/verify');
     } catch (error) {
