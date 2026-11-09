@@ -30,6 +30,7 @@ export class AuthApiError extends Error {}
 class RequestTimeoutError extends Error {}
 
 const REQUEST_TIMEOUT_MS = 12_000;
+const OTP_REQUEST_TIMEOUT_MS = 90_000;
 
 export function getApiUrl() {
   let apiUrl = (process.env.EXPO_PUBLIC_API_URL?.trim() || 'https://mi-barrio-v1.onrender.com').replace(/\/$/, '');
@@ -49,13 +50,13 @@ export function getApiUrl() {
   return apiUrl;
 }
 
-async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
+async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = REQUEST_TIMEOUT_MS): Promise<Response> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
   try {
     return await Promise.race([
       fetch(url, init),
       new Promise<Response>((_resolve, reject) => {
-        timeoutId = setTimeout(() => reject(new RequestTimeoutError()), REQUEST_TIMEOUT_MS);
+        timeoutId = setTimeout(() => reject(new RequestTimeoutError()), timeoutMs);
       }),
     ]);
   } finally {
@@ -63,7 +64,7 @@ async function fetchWithTimeout(url: string, init: RequestInit): Promise<Respons
   }
 }
 
-async function post<T>(path: string, body: object): Promise<T> {
+async function post<T>(path: string, body: object, timeoutMs = REQUEST_TIMEOUT_MS): Promise<T> {
   const apiUrl = getApiUrl();
   let response: Response;
   try {
@@ -74,10 +75,10 @@ async function post<T>(path: string, body: object): Promise<T> {
         Accept: 'application/json',
       },
       body: JSON.stringify(body),
-    });
+    }, timeoutMs);
   } catch (error) {
     if (error instanceof RequestTimeoutError) {
-      throw new AuthApiError(`La API ${apiUrl} no respondio en 12 segundos. Revisa la red local y que el puerto 10000 sea accesible desde el telefono.`);
+      throw new AuthApiError(`La API ${apiUrl} no respondió en ${Math.ceil(timeoutMs / 1000)} segundos. Comprueba el estado de Render y vuelve a intentarlo.`);
     }
     throw new AuthApiError(
       __DEV__
@@ -157,7 +158,7 @@ export const authApi = {
       phone_number: phoneNumber,
       installation_id: installationId,
       ...(fullName ? { full_name: fullName } : {}),
-    });
+    }, OTP_REQUEST_TIMEOUT_MS);
   },
 
   async verifyOtp(phoneNumber: string, fullName: string, code: string): Promise<StoredSession> {
