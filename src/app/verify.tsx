@@ -76,6 +76,9 @@ export default function VerifyScreen() {
     setRequestError('');
     try {
       await authApi.requestOtp(pending.phoneNumber, pending.fullName);
+      const updatedPending = { ...pending };
+      setPending(updatedPending);
+      await authStorage.savePendingRegistration(updatedPending);
       setCode('');
       setResendIn(60);
     } catch (error) {

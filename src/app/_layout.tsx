@@ -6,6 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
+import { AppStateProvider } from '@/components/app-state';
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -16,9 +18,11 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }} />
-    </ThemeProvider>
+    <AppStateProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }} />
+      </ThemeProvider>
+    </AppStateProvider>
   );
 }
