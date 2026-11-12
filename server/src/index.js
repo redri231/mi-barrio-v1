@@ -738,8 +738,11 @@ app.post('/api/v1/admin/users/:userId/approve-tier-3', requireVerificationReview
       await client.query("UPDATE users SET tier = 'level_3_provider_brigade', updated_at = NOW() WHERE user_id = $1", [user.user_id]);
       if (specialty) await client.query(`
         INSERT INTO neighborhood_brigades (user_id, specialty, quadrant_id, is_active)
-        SELECT $1, $2, $3, TRUE
-        WHERE NOT EXISTS (SELECT 1 FROM neighborhood_brigades WHERE user_id = $1 AND quadrant_id = $3 AND specialty = $2)
+        SELECT $1::uuid, $2::text, $3::uuid, TRUE
+        WHERE NOT EXISTS (
+          SELECT 1 FROM neighborhood_brigades
+          WHERE user_id = $1::uuid AND quadrant_id = $3::uuid AND specialty = $2::text
+        )
       `, [user.user_id, specialty, user.quadrant_id]);
       await client.query('COMMIT');
       return response.json({ approved: true, tier: 'level_3_provider_brigade', brigade: Boolean(specialty) });
