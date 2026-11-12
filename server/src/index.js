@@ -747,7 +747,15 @@ app.post('/api/v1/admin/users/:userId/approve-tier-3', requireVerificationReview
       await client.query('ROLLBACK').catch(() => {});
       throw error;
     } finally { client.release(); }
-  } catch {
+  } catch (error) {
+    // Keep database diagnostics in Render logs without returning internals to clients.
+    console.error('Tier 3 approval failed.', {
+      code: error?.code,
+      message: error?.message,
+      table: error?.table,
+      column: error?.column,
+      constraint: error?.constraint,
+    });
     return response.status(503).json({ error: 'TIER_REVIEW_UNAVAILABLE', message: 'No pudimos revisar el cambio de nivel.' });
   }
 });
